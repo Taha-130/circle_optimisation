@@ -13,7 +13,6 @@ from functools import lru_cache
 
 
 # Fonctions -------------------------------------------------------------------
-@lru_cache(maxsize=None)
 def distance(lst1, lst2):
     """
     Calcule la distance entre deux points, représentés par des
@@ -258,11 +257,13 @@ def tour_ia(sauvegarde, choix, couleur, budget, nombre_tour):
     else:
         rayon = 50
         
-    points_possibles = set()
-    for i in range(50,800,(rayon//2)+1):
-        for j in range(100,600,(rayon//2)+1):
-            if point_place((i, j), rayon, couleur, sauvegarde) != True:
-                points_possibles.add((i, j))
+    points_possibles = {
+    (i, j)
+    for i in range(50, 800, (rayon // 2) + 1)
+    for j in range(100, 600, (rayon // 2) + 1)
+    if not point_place((i, j), rayon, couleur, sauvegarde)
+    }
+
                 
     points_possibles_en = set()
     if couleur == "red":
@@ -573,45 +574,40 @@ def menu():
 
 
 def jeu_profilage():
-    fenetre_creee = False  # Indicateur pour suivre l'état de la fenêtre
+    fenetre_creee = False  # Indicateur pour suivre si la fenêtre est créée
     try:
+        # Création de la fenêtre
         cree_fenetre(800, 600)
         fenetre_creee = True  # La fenêtre est maintenant créée
+        print("Fenêtre créée avec succès.")
+        
+        # Menu et lancement du jeu principal
         choix = menu()
         while choix["JVSIA"] and choix["IAVSIA"]:
             print("Attention! Vous devez choisir entre Joueur VS IA ou IA VS IA, mais pas les deux.")
             choix = menu()
-        print("cliquez dans la zone pour creer une boule, dans une boule enemie pour la diviser")
-        print("attention à où vous cliquez et à ne pas cliquer lorsque votre tour n'est pas en cours")
-        if choix["Terminaison"]:
-            print("taper f pour qu'il ne reste que 10 tours")
-        if choix["Scores"]:
-            print("taper s pour voir le score")
-        if choix["Sablier"]:
-            print("attention au temps")
-        if choix["Obstacles"]:
-            print("ne pas cliquer dans les obstacles en noir")
-        if choix["Taille des boules"]:
-            print("après avoir cliqué, choisissez votre taille")
-        if choix["Version dynamique"]:
-            print("Désolé, la version prototype de 'Version dynamique', n'est pas disponible")
-        print()
-        # Lancement du jeu principal
-        main(choix)
+        
+        print("Cliquez dans la zone pour créer une boule, dans une boule ennemie pour la diviser.")
+        main(choix)  # Lance le jeu principal
+    
     except Exception as e:
-        print("Une erreur est survenue:", e)
+        print(f"Une erreur est survenue : {e}")
+    
     finally:
-        # On ne ferme la fenêtre que si elle a été créée
+        # Vérifie si la fenêtre a été créée avant de tenter de la fermer
         if fenetre_creee:
-            cree_fenetre(800, 600)
-            ferme_fenetre()
+            try:
+                ferme_fenetre()
+                print("Fenêtre fermée avec succès.")
+            except Exception as e:
+                print(f"Erreur lors de la fermeture de la fenêtre : {e}")
+        else:
+            print("La fenêtre n'a pas été créée, rien à fermer.")
 
 
 
 if __name__ == '__main__':
     import cProfile
-
-
 
     # Lancer le profilage
     cProfile.run('jeu_profilage()', sort='time')
