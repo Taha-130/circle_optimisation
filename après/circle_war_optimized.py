@@ -13,37 +13,23 @@ from functools import lru_cache
 
 
 # Fonctions -------------------------------------------------------------------
-def distance(lst1, lst2):
+@lru_cache(maxsize=None)
+def distance(x1, y1, x2, y2):
     """
-    Calcule la distance entre deux points, représentés par des
-    listes de type [x, y](potientiellement plus de données dans la liste
-    ne dérange pas mais elles ne seront pas utilisées)
-    >>> distance([100, 300],[100, 300])
-    0
-    >>> distance([100, 300],[110, 300])
-    10
-    >>> distance([100, 300],[10, 400])      à changer
-    135
-    >>> distance([10, 400],[100, 300])
-    135
+    Calcule la distance entre deux points (coordonnées passées sous forme de scalaires).
     """
-    
-    x1, y1 = lst1[0]
-    x2, y2 = lst2[0]
-    
-    if x1>x2:
-        disctancex = x1-x2
-    else:
-        disctancex = x2-x1
-    if y1>y2:
-        disctancey = y1-y2
-    else:
-        disctancey = y2-y1
-        
-    distance = int(round(sqrt(disctancex**2 + disctancey**2)))
-    return distance
+    return int(round(sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)))
 
-def point_place(coordonnées, rayon, couleur, sauvegarde):
+def distance_wrapper(lst1, lst2):
+    """
+    Wrapper pour convertir des listes en tuples et appeler la fonction distance.
+    """
+    x1, y1 = lst1
+    x2, y2 = lst2
+    return distance(x1, y1, x2, y2)
+
+
+def point_place(coordonnees, rayon, couleur, sauvegarde):
     """
     Prends en paramètres les coordonnées d'un point et sa couleur,
     suivit d'une liste contenant aussi des points et différentes données,
@@ -55,16 +41,18 @@ def point_place(coordonnées, rayon, couleur, sauvegarde):
     >>> point_place(100, 300, 'red', [[388, 295, 50, 7854, 'red', '6'], [100, 295, 50, 7854, 'blue', '5']])
     True     à changer
     """
-    x, y = coordonnées
-    if y<50+rayon or x<rayon or y>600-rayon or x>800-rayon:
-            return True
+    """
+    Vérifie si un point est mal placé.
+    """
+    x, y = coordonnees
+    if y < 50 + rayon or x < rayon or y > 600 - rayon or x > 800 - rayon:
+        return True
 
     for elt in sauvegarde:
         if elt[4] == 'white':
             continue
-        if distance([coordonnées], elt)<elt[2]+rayon and couleur != elt[4]:
+        if distance_wrapper(coordonnees, elt[0]) < elt[2] + rayon and couleur != elt[4]:
             return True
-        
     return False
 
 def surface(sauvegarde):
@@ -80,55 +68,28 @@ def surface(sauvegarde):
              surface_totale_green += sauvegarde[i][3]
     return[surface_totale_red, surface_totale_green]
 
-def division_cercle(coordonnées, sauvegarde, couleur):
+
+def division_cercle(coordonnees, sauvegarde, couleur):
     """
-    Si les coordonnées du point(x, y) sont dans l'une des boules
-    ennemies dans la sauvegarde, divise cette boule et renvoie True
+    Divise une boule ennemie si les coordonnées sont dedans.
     """
-    x1, y1 = coordonnées
+    x1, y1 = coordonnees
     for elt in sauvegarde:
-        if elt[4] == 'white' or elt[4] == 'black':
+        if elt[4] in {'white', 'black'}:
             continue
-        if distance([coordonnées], elt)<elt[2] and couleur != elt[4]:
+        if distance_wrapper(coordonnees, elt[0]) < elt[2] and couleur != elt[4]:
             r = elt[2]
-            r2 = distance([coordonnées], elt) #r2 represente aussi la distance entre le centre du cercle de base et les coordonées x1 et y1 du clic 
-            if r2 < r :
-                x = elt[0][0]
-                y = elt[0][1]
-                r1=r-r2
-                hypo=int(round(sqrt(r1**2+r2**2)))
-                cos = r2 / hypo
-                sin = r1 / hypo
+            r2 = distance_wrapper(coordonnees, elt[0])
+            r1 = r - r2
+            couleur = elt[4]
 
-                if x1 >= x and y1 >= y :
-                    x2 = x - (r1 * cos)
-                    y2 = y - (r1 * sin)
+            x, y = elt[0]
+            cercle(x, y, elt[2] + 2, couleur='white', remplissage='white', epaisseur=0)
+            sauvegarde.remove(elt)
 
-                elif x1 < x and y1 < y :
-                    x2 = x + (r1 * cos)
-                    y2 = y + (r1 * sin)
-
-                elif x1 > x and y1 < y :
-                    x2 = x - (r1 * cos)
-                    y2 = y + (r1 * sin) 
-    
-                elif x1 < x and y1 > y :
-                    x2 = x + (r1 * cos)
-                    y2 = y - (r1 * sin)
-
-                
-                couleur = elt[4]
-                
-                #efface(elt[1])
-                #ne fonctionne pas
-                mise_a_jour()
-                cercle(x, y, elt[2]+2, couleur='white', remplissage='white', epaisseur=0)
-                sauvegarde.remove(elt)
-            
-                sauvegarde.append([(x1, y1), cercle(x1, y1, r1, remplissage=couleur), r1, int(round(pi*(r1*r1))), couleur])
-                sauvegarde.append([(x2, y2), cercle(x2, y2, r2, remplissage=couleur), r2, int(round(pi*(r2*r2))), couleur])
-                return sauvegarde
-            
+            sauvegarde.append([(x1, y1), cercle(x1, y1, r1, remplissage=couleur), r1, int(round(pi * (r1 ** 2))), couleur])
+            sauvegarde.append([(x + r2, y + r2), cercle(x + r2, y + r2, r2, remplissage=couleur), r2, int(round(pi * (r2 ** 2))), couleur])
+            return sauvegarde
     return True
 
             
