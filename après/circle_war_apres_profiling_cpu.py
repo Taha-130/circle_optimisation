@@ -11,7 +11,6 @@ from math import sqrt
 from random import *
 from functools import lru_cache
 
-
 # Fonctions -------------------------------------------------------------------
 @lru_cache(maxsize=None)
 def distance(x1, y1, x2, y2):
@@ -175,7 +174,6 @@ def division_ia(couleur, sauvegarde):
     y = randint(int(boule_div[0][0]-boule_div[2]),int(boule_div[0][0]+boule_div[2]))
     division_cercle((x, y), sauvegarde, couleur)
         
-    
 def tour_ia(sauvegarde, choix, couleur, budget, nombre_tour):
     """
     Simule le tour qu'une IA ferait. Il y a une chance que,
@@ -572,4 +570,5 @@ if __name__ == '__main__':
 
     # Lancer le profilage
     cProfile.run('jeu_profilage()', sort='time')
+
 

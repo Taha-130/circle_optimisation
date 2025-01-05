@@ -570,47 +570,25 @@ def menu():
     return choix
 
 
-def jeu_profilage():
-    fenetre_creee = False  # Indicateur pour suivre l'état de la fenêtre
-    try:
-        cree_fenetre(800, 600)
-        fenetre_creee = True  # La fenêtre est maintenant créée
-        choix = menu()
-        while choix["JVSIA"] and choix["IAVSIA"]:
-            print("Attention! Vous devez choisir entre Joueur VS IA ou IA VS IA, mais pas les deux.")
-            choix = menu()
-        print("cliquez dans la zone pour creer une boule, dans une boule enemie pour la diviser")
-        print("attention à où vous cliquez et à ne pas cliquer lorsque votre tour n'est pas en cours")
-        if choix["Terminaison"]:
-            print("taper f pour qu'il ne reste que 10 tours")
-        if choix["Scores"]:
-            print("taper s pour voir le score")
-        if choix["Sablier"]:
-            print("attention au temps")
-        if choix["Obstacles"]:
-            print("ne pas cliquer dans les obstacles en noir")
-        if choix["Taille des boules"]:
-            print("après avoir cliqué, choisissez votre taille")
-        if choix["Version dynamique"]:
-            print("Désolé, la version prototype de 'Version dynamique', n'est pas disponible")
-        print()
-        # Lancement du jeu principal
-        main(choix)
-    except Exception as e:
-        print("Une erreur est survenue:", e)
-    finally:
-        # On ne ferme la fenêtre que si elle a été créée
-        if fenetre_creee:
-            cree_fenetre(800, 600)
-            ferme_fenetre()
-
-
-
 if __name__ == '__main__':
-    import cProfile
-
-
-
-    # Lancer le profilage
-    cProfile.run('jeu_profilage()', sort='time')
-
+    cree_fenetre(800,600)
+    choix = menu()
+    while choix["JVSIA"] and choix["IAVSIA"]:
+        print("attention! Vous devez choisir entre jouer contre l'ordinateur ou le faire s'affronter lui même mais pas les deux")
+        choix = menu()
+    print("cliquez dans la zone pour creer une boule, dans une boule enemie pour la diviser")
+    print("attention à où vous cliquez et à ne pas cliquer lorsque votre tour n'est pas en cours")
+    if choix["Terminaison"]:
+        print("taper f pour qu'il ne reste que 10 tours")
+    if choix["Scores"]:
+        print("taper s pour voir le score")
+    if choix["Sablier"]:
+        print("attention au temps")
+    if choix["Obstacles"]:
+        print("ne pas cliquer dans les obstacles en noir")
+    if choix["Taille des boules"]:
+        print("après avoir cliqué, choisissez votre taille")
+    if choix["Version dynamique"]:
+        print("Désolé, la version prototype de 'Version dynamique', n'est pas disponible")
+    print()
+    main(choix)
