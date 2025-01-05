@@ -26,24 +26,21 @@ Clonez le projet depuis le dépôt GitHub :
 git clone https://github.com/Taha-130/circle_optimisation
 ```
 
-### 2. Créez et activez un environnement virtuel
+### 2. Vérifiez que l'environnement virtuel est actif
+
+Une fois activé, `(venv)` doit apparaître au début de la ligne de commande, comme ceci :
 
 - **Sur macOS/Linux :**
 
   ```bash
-  python3 -m venv venv
+  cd après
   source venv/bin/activate
   ```
 
 - **Sur Windows (cmd) :**
   ```cmd
-  python -m venv venv
   venv\Scripts\activate
   ```
-
-### 3. Vérifiez que l'environnement virtuel est actif
-
-Une fois activé, `(venv)` doit apparaître au début de la ligne de commande, comme ceci :
 
 ```bash
 (venv) user@machine:~/Optimisation$
