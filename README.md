@@ -23,8 +23,7 @@ Avant de commencer, vous devez disposer de :
 Clonez le projet depuis le dépôt GitHub :
 
 ```bash
-git clone https://github.com/votre-utilisateur/projet-circle-war.git
-cd projet-circle-war
+git clone https://github.com/Taha-130/circle_optimisation
 ```
 
 ### 2. Créez et activez un environnement virtuel
